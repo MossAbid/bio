@@ -1,0 +1,352 @@
+<!--
+  ============================================================
+  @ConsultantChronicles — Page "lien en bio"
+  Objectif : convertir le trafic TikTok en abonnés email.
+  ------------------------------------------------------------
+  DÉMO vs RÉEL :
+  - En aperçu (dans Claude), le formulaire fonctionne en mode DÉMO
+    et stocke les inscriptions localement pour que tu testes le flux.
+  - Pour le déploiement réel, mets DEMO_MODE = false (plus bas dans le
+    <script>) et colle l'URL de ton service email à l'endroit balisé
+    "INTÉGRATION EMAIL". Reco : Brevo (français, RGPD-natif, gratuit),
+    sinon MailerLite ou Kit.
+  ============================================================
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Best Practices Carrière — les méthodes éprouvées d'un recruteur en activité pour faire avancer ta carrière. CV, entretien, négociation.">
+<title>Consultant Chronicles — Best Practices Carrière</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDY0IDY0Ij48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiMwRDBEMEYiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzMC43NywzNC42Nikgc2NhbGUoMC4yMDMzKSI+PHBhdGggZD0iTTMuMTAsNTUuMTYgQTcwLDcwIDAgMSAxIDMuMTAsLTU1LjE2IiBmaWxsPSJub25lIiBzdHJva2U9IiNDOUEzNUEiIHN0cm9rZS13aWR0aD0iMjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgLz48cGF0aCBkPSJNODkuMTAsNTUuMTYgQTcwLDcwIDAgMSAxIDg5LjEwLC01NS4xNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzlBMzVBIiBzdHJva2Utd2lkdGg9IjI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiIC8+PGxpbmUgeDE9Ijg5LjEwIiB5MT0iLTU1LjE2IiB4Mj0iMTA5LjkwIiB5Mj0iLTgwLjM0IiBzdHJva2U9IiNDOUEzNUEiIHN0cm9rZS13aWR0aD0iMjIuMzYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMjcuMTAsLTEwMS4xNiBMMTIxLjQyLC03MS43MCBMOTkuMjQsLTkwLjAyIFoiIGZpbGw9IiNDOUEzNUEiLz48L2c+PC9zdmc+">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --ink:#0d0d0f;
+    --ink-2:#151517;
+    --panel:#1b1b1e;
+    --panel-2:#202024;
+    --line:rgba(201,163,90,.22);
+    --line-soft:rgba(236,234,227,.08);
+    --gold:#c9a35a;
+    --gold-bright:#e6cd8b;
+    --cream:#ecebe3;
+    --muted:#9c988c;
+    --muted-2:#726f68;
+    --ok:#7bbf8e;
+    --err:#e0857a;
+    --radius:16px;
+    --maxw:540px;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--cream);
+    font-family:"Archivo",-apple-system,BlinkMacSystemFont,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  /* atmosphere : halo or + grain */
+  .bg{position:fixed;inset:0;z-index:-2;pointer-events:none;
+    background:
+      radial-gradient(900px 520px at 50% -8%, rgba(201,163,90,.16), transparent 60%),
+      radial-gradient(700px 600px at 90% 12%, rgba(201,163,90,.06), transparent 55%),
+      linear-gradient(180deg,#0d0d0f 0%,#0b0b0d 55%,#0d0d0f 100%);
+  }
+  .grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:38px 22px 56px;position:relative}
+
+  /* ---- reveal animation ---- */
+  .rise{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .d1{animation-delay:.05s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}
+  .d4{animation-delay:.4s}.d5{animation-delay:.52s}.d6{animation-delay:.64s}
+
+  /* ---- brand mark ---- */
+  .brand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px}
+  .mark{width:84px;height:84px;display:block;filter:drop-shadow(0 6px 18px rgba(201,163,90,.25))}
+  .handle{font-family:"Fraunces";font-weight:600;letter-spacing:.5px;font-size:22px}
+  .handle b{color:var(--gold)}
+  .kicker{font-size:11px;letter-spacing:3.6px;text-transform:uppercase;color:var(--gold);font-weight:600}
+
+  /* ---- hero copy ---- */
+  .hero{margin:34px 0 0;text-align:center}
+  h1{font-family:"Fraunces";font-weight:500;font-size:clamp(30px,8.4vw,42px);line-height:1.08;
+    margin:0 0 16px;letter-spacing:-.4px}
+  h1 em{font-style:italic;color:var(--gold-bright)}
+  .lede{color:var(--muted);font-size:16px;max-width:430px;margin:0 auto}
+
+  /* ---- offer card ---- */
+  .card{margin:30px 0 0;background:linear-gradient(180deg,var(--panel),var(--ink-2));
+    border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px 22px;
+    box-shadow:0 24px 60px -28px rgba(0,0,0,.9), inset 0 1px 0 rgba(236,234,227,.04)}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:1.8px;
+    text-transform:uppercase;color:var(--gold);border:1px solid var(--line);
+    padding:5px 11px;border-radius:999px;font-weight:600}
+  .pill .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+  .offer-title{font-family:"Fraunces";font-size:25px;font-weight:600;margin:15px 0 6px;line-height:1.15}
+  .offer-sub{color:var(--muted);font-size:14.5px;margin:0 0 16px}
+
+  .bullets{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:9px}
+  .bullets li{display:flex;gap:11px;align-items:flex-start;font-size:14px;color:#d6d4cb}
+  .bullets svg{flex:0 0 auto;margin-top:2px}
+
+  /* ---- form ---- */
+  form{display:grid;gap:11px}
+  .field{position:relative}
+  label.lab{display:block;font-size:12px;color:var(--muted);margin:0 0 5px;letter-spacing:.3px}
+  input[type=text],input[type=email]{width:100%;background:var(--ink);color:var(--cream);
+    border:1px solid var(--line-soft);border-radius:11px;padding:13px 14px;font:inherit;font-size:15px;
+    transition:border-color .2s,box-shadow .2s;outline:none}
+  input::placeholder{color:var(--muted-2)}
+  input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,163,90,.16)}
+
+  .consent{display:flex;gap:10px;align-items:flex-start;margin:3px 0 2px}
+  .consent input{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:19px;height:19px;margin-top:1px;
+    border:1px solid var(--line);border-radius:5px;background:var(--ink);cursor:pointer;position:relative;transition:.18s}
+  .consent input:checked{background:var(--gold);border-color:var(--gold)}
+  .consent input:checked::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;
+    border:solid #1a1408;border-width:0 2px 2px 0;transform:rotate(45deg)}
+  .consent label{font-size:12px;color:var(--muted);line-height:1.45}
+  .consent a{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--line)}
+
+  button.cta{margin-top:6px;border:0;cursor:pointer;width:100%;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:#1a1408;
+    font-family:"Archivo";font-weight:700;font-size:15.5px;letter-spacing:.2px;
+    padding:15px 18px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:9px;
+    box-shadow:0 14px 30px -12px rgba(201,163,90,.6);transition:transform .15s,box-shadow .15s,filter .15s}
+  button.cta:hover{transform:translateY(-1px);box-shadow:0 18px 34px -12px rgba(201,163,90,.7);filter:brightness(1.04)}
+  button.cta:active{transform:translateY(0)}
+  button.cta:disabled{opacity:.6;cursor:default;transform:none}
+  .cta svg{transition:transform .2s}
+  button.cta:hover svg{transform:translateY(-2px)}
+
+  .reassure{text-align:center;font-size:11.5px;color:var(--muted-2);margin:12px 0 0}
+
+  .msg{font-size:13px;margin:4px 0 0;min-height:0;text-align:center}
+  .msg.err{color:var(--err)}
+  .msg.ok{color:var(--ok)}
+
+  /* success state */
+  .done{text-align:center;padding:8px 0 4px}
+  .done .badge{width:58px;height:58px;border-radius:50%;margin:0 auto 14px;display:grid;place-items:center;
+    background:rgba(123,191,142,.12);border:1px solid rgba(123,191,142,.35)}
+  .done h3{font-family:"Fraunces";font-size:22px;margin:0 0 6px}
+  .done p{color:var(--muted);font-size:14px;margin:0}
+
+  /* ---- value strip ---- */
+  .value{margin:34px 0 0;display:grid;gap:1px;border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden;background:var(--line-soft)}
+  .value .row{background:var(--ink-2);padding:16px 18px;display:flex;gap:14px;align-items:center}
+  .value .ic{flex:0 0 auto;width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
+    background:rgba(201,163,90,.1);border:1px solid var(--line)}
+  .value h4{margin:0 0 2px;font-size:14.5px;font-weight:600}
+  .value p{margin:0;font-size:13px;color:var(--muted)}
+
+  /* ---- authority ---- */
+  .author{margin:30px 0 0;text-align:center;padding:24px 20px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+  .author .q{font-family:"Fraunces";font-style:italic;font-size:18px;line-height:1.4;color:var(--cream);margin:0 0 12px}
+  .author .sig{font-size:12.5px;color:var(--muted);letter-spacing:.3px}
+  .author .sig b{color:var(--gold);font-weight:600}
+
+  /* ---- teaser ---- */
+  .teaser{margin:30px 0 0;text-align:center}
+  .teaser .kicker{display:block;margin-bottom:10px}
+  .teaser p{color:var(--muted);font-size:14px;max-width:420px;margin:0 auto}
+
+  /* ---- footer ---- */
+  footer{margin:40px 0 0;text-align:center}
+  .social{display:inline-flex;align-items:center;gap:9px;color:var(--cream);text-decoration:none;
+    border:1px solid var(--line);border-radius:999px;padding:10px 18px;font-size:13.5px;font-weight:600;transition:.2s}
+  .social:hover{border-color:var(--gold);color:var(--gold)}
+  .tag{font-family:"Fraunces";font-style:italic;color:var(--muted);font-size:14px;margin:18px 0 4px}
+  .legal{font-size:11px;color:var(--muted-2);margin:6px 0 0}
+  .legal a{color:var(--muted);text-decoration:none}
+
+  @media (prefers-reduced-motion:reduce){
+    .rise{animation:none;opacity:1;transform:none}
+    button.cta:hover{transform:none}
+  }
+</style>
+
+<div class="bg"></div>
+<div class="grain"></div>
+
+<main class="wrap">
+
+  <!-- BRAND -->
+  <section class="brand rise d1">
+    <svg class="mark" viewBox="0 0 1000 1000" aria-hidden="true"><g transform="translate(481.72,539.53) scale(3.0221)"><path d="M3.10,55.16 A70,70 0 1 1 3.10,-55.16" fill="none" stroke="#B68A41" stroke-width="26" stroke-linecap="round"/><path d="M89.10,55.16 A70,70 0 1 1 89.10,-55.16" fill="none" stroke="#CDA65C" stroke-width="26" stroke-linecap="round"/><line x1="89.10" y1="-55.16" x2="109.90" y2="-80.34" stroke="#E6CD8B" stroke-width="22.36" stroke-linecap="round"/><path d="M127.10,-101.16 L121.42,-71.70 L99.24,-90.02 Z" fill="#E6CD8B"/></g></svg>
+    <div>
+      <div class="handle">Consultant <b>Chronicles</b></div>
+      <div class="kicker" style="margin-top:6px">Best Practices Carrière</div>
+    </div>
+  </section>
+
+  <!-- HERO -->
+  <section class="hero rise d2">
+    <h1>Les méthodes de ceux qui <em>recrutent</em>, mises à ton service.</h1>
+    <p class="lede">Chaque semaine, un recruteur en activité partage ses best practices&nbsp;: CV, entretien, négociation. Sans jargon, juste ce qui marche.</p>
+  </section>
+
+  <!-- OFFER + FORM -->
+  <section class="card rise d3" id="offer">
+    <span class="pill"><span class="dot"></span>Gratuit · PDF</span>
+    <h2 class="offer-title">La Checklist du Recruteur</h2>
+    <p class="offer-sub">12 points pour un CV qui passe les filtres ATS — et atterrit sur le bon bureau.</p>
+
+    <ul class="bullets">
+      <li>${check} Les 12 critères qu'un recruteur scanne en 7 secondes.</li>
+      <li>${check} La structure exacte qui passe les robots ATS.</li>
+      <li>${check} Les 5 erreurs qui font rejeter un CV avant lecture humaine.</li>
+      <li>${check} L'astuce mots-clés pour matcher l'offre sans bourrage.</li>
+    </ul>
+
+    <form id="signup" novalidate>
+      <div class="field">
+        <label class="lab" for="prenom">Prénom <span style="color:var(--muted-2)">(facultatif)</span></label>
+        <input type="text" id="prenom" name="prenom" placeholder="Camille" autocomplete="given-name">
+      </div>
+      <div class="field">
+        <label class="lab" for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="toi@email.com" autocomplete="email" required>
+      </div>
+
+      <div class="consent">
+        <input type="checkbox" id="consent" required>
+        <label for="consent">J'accepte de recevoir la checklist et les conseils carrière par email. Je peux me désinscrire à tout moment. <a href="#privacy">Politique de confidentialité</a>.</label>
+      </div>
+
+      <button type="submit" class="cta" id="submitBtn">
+        Recevoir la checklist gratuite
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1408" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      </button>
+      <p class="msg" id="msg" aria-live="polite"></p>
+    </form>
+
+    <p class="reassure">Pas de spam. Désinscription en 1 clic. Tes données restent privées (RGPD).</p>
+  </section>
+
+  <!-- VALUE -->
+  <section class="value rise d4">
+    <div class="row">
+      <div class="ic">${icDoc}</div>
+      <div><h4>CV & ATS</h4><p>Passer les filtres automatiques et capter l'œil humain.</p></div>
+    </div>
+    <div class="row">
+      <div class="ic">${icChat}</div>
+      <div><h4>Entretien</h4><p>Les réponses qui rassurent un recruteur — et les pièges à éviter.</p></div>
+    </div>
+    <div class="row">
+      <div class="ic">${icUp}</div>
+      <div><h4>Négociation</h4><p>Oser parler salaire, avec les bonnes phrases au bon moment.</p></div>
+    </div>
+  </section>
+
+  <!-- AUTHORITY -->
+  <section class="author rise d5">
+    <p class="q">«&nbsp;J'ai lu des milliers de CV et débriefé des centaines d'entretiens. Ici, je te donne ce que je conseillerais à un proche.&nbsp;»</p>
+    <p class="sig">— Par un <b>recruteur en activité</b>, [X] ans d'expérience.</p>
+  </section>
+
+  <!-- TEASER -->
+  <section class="teaser rise d5">
+    <span class="kicker">Bientôt</span>
+    <p>Une masterclass complète en 10 épisodes pour te vendre comme un top candidat — même sans gros réseau. Les inscrits seront prévenus en premier.</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="rise d6">
+    <a class="social" href="https://www.tiktok.com/@consultantchronicles" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8a4.3 4.3 0 0 1-2.6-3.8h-3v12.4a2.5 2.5 0 1 1-2.5-2.5c.2 0 .4 0 .6.1v-3a5.6 5.6 0 1 0 4.9 5.5V8.7a7.3 7.3 0 0 0 4.3 1.4v-3a4.3 4.3 0 0 1-1.7-.3Z"/></svg>
+      @consultantchronicles
+    </a>
+    <p class="tag">Tes best practices pour réussir ta carrière.</p>
+    <p class="legal"><a href="#privacy">Confidentialité</a> · <a href="#mentions">Mentions légales</a> · © <span id="yr"></span> Consultant Chronicles</p>
+  </footer>
+
+</main>
+
+<script>
+  /* ---------- petites icônes injectées (SVG) ---------- */
+  const I = {
+    check: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#c9a35a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    icDoc: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a35a" stroke-width="1.8"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4M9 13h6M9 17h6"/></svg>',
+    icChat:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a35a" stroke-width="1.8"><path d="M21 12a8 8 0 0 1-11.3 7.3L4 21l1.7-5.7A8 8 0 1 1 21 12Z"/></svg>',
+    icUp:  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a35a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 7-7M14 8h6v6"/></svg>'
+  };
+  document.body.innerHTML = document.body.innerHTML
+    .replace(/\$\{check\}/g, I.check)
+    .replace(/\$\{icDoc\}/g, I.icDoc)
+    .replace(/\$\{icChat\}/g, I.icChat)
+    .replace(/\$\{icUp\}/g, I.icUp);
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* =====================================================
+     CONFIGURATION
+     -----------------------------------------------------
+     DEMO_MODE = true  -> teste le flux ici, stockage local
+     DEMO_MODE = false -> envoie vers ton service email réel
+     ===================================================== */
+  const DEMO_MODE = false;
+
+  // ---- INTÉGRATION EMAIL (Brevo) ----
+  const EMAIL_ENDPOINT = "https://f98d842c.sibforms.com/serve/MUIFAK2ozvnCmUeWQMwX9dSKJ3vlGD4iqAVgJyyEVNmkizyPAVUP5zUkPZfaw5wE9kOnrfKjilk-b1PpJyoCwanPl1eefB-BkTsCY5OPeNLfBADhTiv_j5rx2ZDcZ7dbI_6zh7-iXf639m1t1jL7-hdrGbB324Gnv3B4JlBPJZw0Rc9Ij7wp6OpKAuI8QjC-jdKQ6RlNdN7hushSHg==";
+  // -----------------------------------------------------------------
+
+  const form = document.getElementById('signup');
+  const msg  = document.getElementById('msg');
+  const btn  = document.getElementById('submitBtn');
+  const card = document.getElementById('offer');
+
+  function setMsg(t, type){ msg.textContent = t; msg.className = 'msg ' + (type||''); }
+  function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const prenom  = document.getElementById('prenom').value.trim();
+    const email   = document.getElementById('email').value.trim();
+    const consent = document.getElementById('consent').checked;
+
+    if(!validEmail(email)){ setMsg('Entre une adresse email valide.', 'err'); return; }
+    if(!consent){ setMsg('Coche la case pour recevoir la checklist.', 'err'); return; }
+
+    btn.disabled = true; setMsg('Envoi…', '');
+
+    try{
+      const payload = { email, listIds:[2], updateEnabled:true };
+      if(prenom) payload.attributes = { PRENOM: prenom };
+      const res = await fetch('https://api.brevo.com/v3/contacts',{
+        method:'POST',
+        headers:{ 'api-key':'***BREVO_KEY_REVOKED***', 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok){
+        const err = await res.json().catch(()=>({}));
+        if(err.code !== 'duplicate_parameter') throw new Error(err.message || res.status);
+      }
+      showSuccess(prenom);
+    }catch(err){
+      btn.disabled = false;
+      setMsg("Oups, réessaie dans un instant.", 'err');
+    }
+  });
+
+  function showSuccess(prenom){
+    card.innerHTML = `
+      <div class="done">
+        <div class="badge">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#7bbf8e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h3>C'est noté${prenom ? ', ' + prenom : ''} !</h3>
+        <p>Ta checklist arrive par email. Pense à vérifier tes spams (et à ajouter l'adresse à tes contacts).</p>
+      </div>`;
+  }
+</script>
