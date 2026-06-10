@@ -320,28 +320,22 @@
 
     btn.disabled = true; setMsg('Envoi…', '');
 
-    if(DEMO_MODE){
-      // ----- Mode démo : tente le stockage Claude (aperçu uniquement),
-      //       mais affiche toujours le succès même si indisponible. -----
-      try{
-        let list = [];
-        try{ const r = await window.storage.get('subscribers'); if(r) list = JSON.parse(r.value); }catch(e){}
-        list.push({ prenom, email, at: new Date().toISOString() });
-        await window.storage.set('subscribers', JSON.stringify(list));
-      }catch(e){ /* window.storage absent hors aperçu Claude — pas bloquant */ }
-      showSuccess(prenom);
-    } else {
-      // ----- Mode réel : envoi vers ton service email -----
-      try{
-        const body = new FormData();
-        body.append('EMAIL', email);
-        if(prenom) body.append('PRENOM', prenom);
-        await fetch(EMAIL_ENDPOINT, { method:'POST', mode:'no-cors', body });
-        showSuccess(prenom);
-      }catch(err){
-        btn.disabled = false;
-        setMsg("Oups, réessaie dans un instant.", 'err');
+    try{
+      const payload = { email, listIds:[2], updateEnabled:true };
+      if(prenom) payload.attributes = { PRENOM: prenom };
+      const res = await fetch('https://api.brevo.com/v3/contacts',{
+        method:'POST',
+        headers:{ 'api-key':'***BREVO_KEY_REVOKED***', 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok){
+        const err = await res.json().catch(()=>({}));
+        if(err.code !== 'duplicate_parameter') throw new Error(err.message || res.status);
       }
+      showSuccess(prenom);
+    }catch(err){
+      btn.disabled = false;
+      setMsg("Oups, réessaie dans un instant.", 'err');
     }
   });
 
