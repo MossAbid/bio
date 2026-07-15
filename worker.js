@@ -1,5 +1,5 @@
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
 
     const CORS = {
       'Access-Control-Allow-Origin': '*',
@@ -35,7 +35,7 @@ export default {
       const brevo = await fetch('https://api.brevo.com/v3/contacts', {
         method: 'POST',
         headers: {
-          'api-key': '***BREVO_KEY_REVOKED***',
+          'api-key': env.BREVO_API_KEY,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),

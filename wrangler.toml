@@ -1,0 +1,6 @@
+name = "brevo-subscribe"
+main = "worker.js"
+compatibility_date = "2026-07-15"
+
+# Secret requis (à définir une seule fois, pas de valeur ici) :
+#   npx wrangler secret put BREVO_API_KEY
