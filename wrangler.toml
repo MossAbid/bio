@@ -1,6 +1,14 @@
 name = "brevo-subscribe"
-main = "worker.js"
-compatibility_date = "2026-07-15"
+main = "worker/index.js"
+compatibility_date = "2026-07-01"
 
-# Secret requis (à définir une seule fois, pas de valeur ici) :
-#   npx wrangler secret put BREVO_API_KEY
+[vars]
+NOTIFY_EMAIL = "mmossly@gmail.com"
+SITE_ORIGIN = "https://consultantchronicles.fr"
+CLIENTS_LIST_ID = "7"   # liste Brevo « Clients » (distincte de la liste prospects #2)
+WORKER_ORIGIN = "https://brevo-subscribe.mmossly.workers.dev"
+
+[assets]
+directory = "assets-private"
+binding = "ASSETS"
+run_worker_first = true

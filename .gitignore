@@ -1,0 +1,7 @@
+CLAUDE.md
+_archive-preview-demo/
+_scripts/
+.DS_Store
+node_modules/
+.wrangler/
+assets-private/
