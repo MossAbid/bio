@@ -2,7 +2,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Le guide CV/ATS et l'audit personnalisé d'un recruteur en activité. Méthodes concrètes, côté coulisses.">
 <title>Mes offres — Consultant Chronicles</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDY0IDY0Ij48cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIGZpbGw9IiMwRDBEMEYiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzMC43NywzNC42Nikgc2NhbGUoMC4yMDMzKSI+PHBhdGggZD0iTTMuMTAsNTUuMTYgQTcwLDcwIDAgMSAxIDMuMTAsLTU1LjE2IiBmaWxsPSJub25lIiBzdHJva2U9IiNDOUEzNUEiIHN0cm9rZS13aWR0aD0iMjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgLz48cGF0aCBkPSJNODkuMTAsNTUuMTYgQTcwLDcwIDAgMSAxIDg5LjEwLC01NS4xNiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjQzlBMzVBIiBzdHJva2Utd2lkdGg9IjI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiIC8+PGxpbmUgeDE9Ijg5LjEwIiB5MT0iLTU1LjE2IiB4Mj0iMTA5LjkwIiB5Mj0iLTgwLjM0IiBzdHJva2U9IiNDOUEzNUEiIHN0cm9rZS13aWR0aD0iMjIuMzYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMjcuMTAsLTEwMS4xNiBMMTIxLjQyLC03MS43MCBMOTkuMjQsLTkwLjAyIFoiIGZpbGw9IiNDOUEzNUEiLz48L2c+PC9zdmc+">
+<link rel="icon" type="image/png" href="/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,8 +17,13 @@
     radial-gradient(900px 520px at 50% -8%, rgba(201,163,90,.16), transparent 60%),
     linear-gradient(180deg,#0d0d0f 0%,#0b0b0d 55%,#0d0d0f 100%)}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:38px 22px 56px}
-  .back{display:inline-block;color:var(--muted);text-decoration:none;font-size:13px;margin-bottom:26px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:30px}
+  .back{color:var(--muted);text-decoration:none;font-size:13px}
   .back:hover{color:var(--gold)}
+  .brandlink{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--cream)}
+  .brandlink img{width:30px;height:30px;display:block;filter:drop-shadow(0 3px 9px rgba(201,163,90,.25))}
+  .brandlink .bw{font-family:"Fraunces";font-weight:600;font-size:15px;letter-spacing:.3px}
+  .brandlink .bw b{color:var(--gold);font-weight:600}
   h1{font-family:"Fraunces";font-weight:500;font-size:clamp(30px,8.4vw,40px);line-height:1.1;margin:0 0 10px;text-align:center}
   h1 em{font-style:italic;color:var(--gold-bright)}
   .lede{color:var(--muted);font-size:15.5px;text-align:center;max-width:430px;margin:0 auto 34px}
@@ -49,7 +54,10 @@
 </style></head><body>
 <div class="bg"></div>
 <main class="wrap">
-  <a class="back" href="/">← Retour</a>
+  <header class="topbar">
+    <a class="back" href="/">← Retour</a>
+    <a class="brandlink" href="/"><img src="/logo-mark.png" alt=""><span class="bw">Consultant <b>Chronicles</b></span></a>
+  </header>
   <h1>Passe de l'autre côté <em>de la table.</em></h1>
   <p class="lede">Deux façons d'utiliser l'œil d'un recruteur en activité pour ta propre candidature.</p>
 
