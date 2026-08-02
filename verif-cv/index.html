@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vérifie ton CV — ce que la machine lit vraiment | Consultant Chronicles</title>
+<meta name="description" content="Dépose ton CV : tu vois exactement le texte qu'un logiciel de recrutement (ATS) en extrait, dans l'ordre où il le lit. Tout se passe dans ton navigateur, aucun fichier n'est envoyé.">
+<link rel="icon" href="../favicon.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root{
+  --noir:#0D0D0F; --noir-deep:#08080A; --noir-soft:#141419;
+  --or:#C9A35A; --or-clair:#E3C588;
+  --creme:#ECEBE3; --creme-dim:rgba(236,235,227,.55); --creme-faint:rgba(236,235,227,.3);
+  --ok:#6FB98F; --ko:#D9705E;
+  --bord:rgba(236,235,227,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--noir-deep); color:var(--creme);
+  font-family:'Archivo',system-ui,sans-serif; line-height:1.55;
+  min-height:100vh;
+  background-image:radial-gradient(120% 60% at 50% 0%, #17161C 0%, var(--noir) 45%, var(--noir-deep) 100%);
+  background-attachment:fixed;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+/* ---------- en-tête ---------- */
+header{padding:38px 0 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;
+       letter-spacing:.2em;text-transform:uppercase;color:rgba(201,163,90,.75);text-decoration:none}
+.hero{padding:52px 0 40px;max-width:760px}
+.eyebrow{font-weight:700;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--or)}
+h1{font-family:'Fraunces',serif;font-weight:500;font-size:clamp(34px,5.6vw,60px);
+   line-height:1.06;letter-spacing:-.02em;margin:18px 0 20px}
+h1 em{font-style:italic;color:var(--or-clair)}
+.lede{font-size:clamp(16px,2vw,19px);color:var(--creme-dim);max-width:620px}
+.privacy{display:inline-flex;align-items:center;gap:9px;margin-top:24px;padding:9px 15px;
+         border:1px solid var(--bord);border-radius:3px;font-size:13.5px;color:var(--creme-dim)}
+.privacy b{color:var(--creme);font-weight:600}
+
+/* ---------- zone de dépôt ---------- */
+.drop{
+  margin:8px 0 56px; border:1.5px dashed rgba(201,163,90,.4); border-radius:6px;
+  background:rgba(201,163,90,.035); padding:54px 28px; text-align:center;
+  cursor:pointer; transition:border-color .18s, background .18s, transform .18s;
+}
+.drop:hover,.drop.over{border-color:var(--or);background:rgba(201,163,90,.09)}
+.drop.over{transform:scale(1.008)}
+.drop .ic{font-size:34px;line-height:1;color:var(--or);margin-bottom:14px}
+.drop .t{font-family:'Fraunces',serif;font-size:24px;font-weight:500}
+.drop .s{color:var(--creme-dim);font-size:14.5px;margin-top:9px}
+.drop input{display:none}
+.err{margin-top:16px;color:var(--ko);font-size:14.5px;display:none}
+
+/* ---------- résultats ---------- */
+#results{display:none;padding-bottom:70px}
+.sec-title{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,30px);font-weight:500;
+           margin:46px 0 6px}
+.sec-sub{color:var(--creme-dim);font-size:15px;margin-bottom:22px;max-width:640px}
+
+.verdict{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(258px,1fr))}
+.chk{display:flex;gap:13px;align-items:flex-start;padding:17px 18px;
+     background:var(--noir-soft);border:1px solid var(--bord);border-radius:4px}
+.chk .mark{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;
+           font-size:13px;font-weight:700;margin-top:1px}
+.chk.pass .mark{color:var(--ok);border:1px solid rgba(111,185,143,.5);background:rgba(111,185,143,.12)}
+.chk.fail .mark{color:var(--ko);border:1px solid rgba(217,112,94,.5);background:rgba(217,112,94,.12)}
+.chk.warn .mark{color:var(--or);border:1px solid rgba(201,163,90,.5);background:rgba(201,163,90,.12)}
+.chk .lbl{font-weight:600;font-size:15px}
+.chk .exp{color:var(--creme-dim);font-size:13.5px;margin-top:3px;line-height:1.45}
+
+.score{margin:26px 0 0;padding:22px 24px;border-radius:4px;border:1px solid var(--bord);
+       background:var(--noir-soft);display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.score .big{font-family:'Fraunces',serif;font-size:40px;font-weight:600;line-height:1}
+.score.good .big{color:var(--ok)} .score.bad .big{color:var(--ko)} .score.mid .big{color:var(--or)}
+.score .txt{flex:1;min-width:240px;font-size:15px;color:var(--creme-dim)}
+.score .txt b{color:var(--creme)}
+
+/* ---------- vue comparée ---------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+@media(max-width:860px){.split{grid-template-columns:1fr}}
+.pane{background:var(--noir-soft);border:1px solid var(--bord);border-radius:4px;overflow:hidden;
+      display:flex;flex-direction:column;min-height:300px}
+.pane h3{font-size:11.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+         padding:14px 17px;border-bottom:1px solid var(--bord);color:var(--creme-dim);
+         display:flex;align-items:center;gap:9px}
+.pane h3 .dot{width:7px;height:7px;border-radius:50%;background:var(--or)}
+.pane h3 .machine{color:var(--or)}
+.canvas-holder{position:relative;padding:18px;display:grid;place-items:center;overflow:auto;flex:1}
+.canvas-stack{position:relative;line-height:0;box-shadow:0 14px 44px rgba(0,0,0,.6)}
+#pageCanvas{display:block;max-width:100%;height:auto}
+#lineLayer{position:absolute;inset:0;pointer-events:none}
+#lineLayer .ln{position:absolute;background:rgba(201,163,90,.42);
+               box-shadow:0 0 0 1px rgba(201,163,90,.75);opacity:0;border-radius:1px}
+#lineLayer .ln.on{opacity:1}
+#gutter{position:absolute;top:0;bottom:0;background:rgba(217,112,94,.16);
+        border-left:2px solid var(--ko);border-right:2px solid var(--ko);display:none}
+
+.stream{flex:1;padding:20px 19px;font-family:'JetBrains Mono',ui-monospace,monospace;
+        font-size:14.5px;line-height:1.72;color:var(--creme-dim);white-space:pre-wrap;
+        word-break:break-word;overflow:auto;max-height:640px}
+.stream .hl{color:var(--or-clair)}
+.stream .cursor{display:inline-block;width:8px;height:16px;background:var(--or);
+                vertical-align:-3px;animation:blink .9s steps(2) infinite}
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+
+.controls{display:flex;gap:11px;flex-wrap:wrap;margin-top:20px;align-items:center}
+button{font-family:'Archivo';font-weight:600;font-size:14px;letter-spacing:.02em;
+       padding:11px 20px;border-radius:3px;border:none;cursor:pointer;transition:opacity .15s}
+button:hover{opacity:.88}
+button:disabled{opacity:.4;cursor:default}
+.btn-p{background:var(--or);color:var(--noir)}
+.btn-g{background:transparent;color:var(--creme);border:1px solid rgba(236,235,227,.25)}
+.meta{color:var(--creme-faint);font-size:13px}
+
+/* ---------- pied ---------- */
+.cta{margin:60px 0 40px;padding:34px 30px;border:1px solid rgba(201,163,90,.3);border-radius:5px;
+     background:linear-gradient(160deg,rgba(201,163,90,.09),transparent 62%)}
+.cta h2{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,30px);font-weight:500;margin-bottom:10px}
+.cta p{color:var(--creme-dim);max-width:560px;margin-bottom:20px}
+.cta a{display:inline-block;background:var(--or);color:var(--noir);text-decoration:none;
+       font-weight:600;font-size:14.5px;padding:12px 24px;border-radius:3px}
+footer{border-top:1px solid var(--bord);padding:26px 0 46px;color:var(--creme-faint);font-size:13px}
+footer a{color:var(--creme-dim)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <a class="brand" href="../"><span style="color:var(--or)">@</span>ConsultantChronicles</a>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">Outil gratuit</div>
+    <h1>Ton CV, vu par <em>la machine</em>.</h1>
+    <p class="lede">Avant qu'un recruteur ne le lise, ton CV passe par un logiciel qui en extrait le texte.
+      Dépose-le ici : tu vois exactement ce que ce logiciel récupère, et dans quel ordre.</p>
+    <div class="privacy">🔒 <span><b>Rien n'est envoyé.</b> Tout se passe dans ton navigateur, ton CV ne quitte pas ton ordinateur.</span></div>
+  </section>
+
+  <label class="drop" id="drop">
+    <div class="ic">↓</div>
+    <div class="t">Dépose ton CV en PDF</div>
+    <div class="s">ou clique pour le choisir — 1 à 3 pages, format PDF uniquement</div>
+    <input type="file" id="file" accept="application/pdf">
+    <div class="err" id="err"></div>
+  </label>
+  <p style="margin:-38px 0 56px;text-align:center;font-size:14px;color:var(--creme-faint)">
+    Pas de CV sous la main ? Essaie avec
+    <a href="exemples/CV-deux-colonnes.pdf" download style="color:var(--or)">un CV en deux colonnes</a> ou
+    <a href="exemples/CV-une-colonne.pdf" download style="color:var(--or)">un CV en une colonne</a>.
+  </p>
+
+  <div id="results">
+    <h2 class="sec-title">Le diagnostic</h2>
+    <p class="sec-sub">Quatre vérifications, celles qui décident si ton CV est lisible ou non par un logiciel de recrutement.</p>
+    <div class="verdict" id="verdict"></div>
+    <div class="score" id="score"></div>
+
+    <h2 class="sec-title">Ce que tu vois &nbsp;/&nbsp; ce qu'elle lit</h2>
+    <p class="sec-sub">À gauche, ton CV. À droite, le texte brut extrait, dans l'ordre exact où il est lu :
+      de gauche à droite, de haut en bas. Lance la lecture pour suivre le trajet.</p>
+
+    <div class="controls">
+      <button class="btn-p" id="play">▶ Lancer la lecture</button>
+      <button class="btn-g" id="all">Tout afficher</button>
+      <button class="btn-g" id="reset">Recommencer avec un autre CV</button>
+      <span class="meta" id="meta"></span>
+    </div>
+
+    <div class="split" style="margin-top:18px">
+      <div class="pane">
+        <h3><span class="dot"></span> Ton CV — page 1</h3>
+        <div class="canvas-holder">
+          <div class="canvas-stack" id="stack">
+            <canvas id="pageCanvas"></canvas>
+            <div id="lineLayer"></div>
+            <div id="gutter"></div>
+          </div>
+        </div>
+      </div>
+      <div class="pane">
+        <h3><span class="dot"></span> <span class="machine">Texte extrait par la machine</span></h3>
+        <div class="stream" id="stream"></div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <h2>Ton CV est illisible pour la machine ?</h2>
+      <p>La Checklist du Recruteur reprend, point par point, ce qu'il faut corriger pour qu'un CV
+         passe le filtre — et ce qu'un recruteur regarde ensuite.</p>
+      <a href="../#signup">Recevoir la checklist gratuite</a>
+    </div>
+  </div>
+
+  <footer>
+    <p>Cet outil lit ton PDF avec la même logique qu'un analyseur de texte standard : il récupère les
+       blocs de texte et les remet dans l'ordre de lecture naturel, de haut en bas et de gauche à droite.
+       Les logiciels de recrutement varient dans le détail, mais c'est ce principe qui casse les CV en
+       colonnes. <a href="../">Retour au site</a></p>
+  </footer>
+</div>
+
+<script type="module">
+import * as pdfjsLib from './pdf.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc = './pdf.worker.min.mjs';
+
+const $ = id => document.getElementById(id);
+const drop = $('drop'), fileInput = $('file'), err = $('err'), results = $('results');
+const canvas = $('pageCanvas'), lineLayer = $('lineLayer'), gutterEl = $('gutter');
+const streamEl = $('stream'), verdictEl = $('verdict'), scoreEl = $('score'), metaEl = $('meta');
+
+let lines1 = [];      // lignes de la page 1, en coordonnées canvas (pour l'animation)
+let fullText = '';    // texte extrait de toutes les pages
+let anim = null;
+
+// ---------- dépôt du fichier ----------
+['dragenter','dragover'].forEach(e => drop.addEventListener(e, ev => {
+  ev.preventDefault(); drop.classList.add('over');
+}));
+['dragleave','drop'].forEach(e => drop.addEventListener(e, ev => {
+  ev.preventDefault(); drop.classList.remove('over');
+}));
+drop.addEventListener('drop', ev => { const f = ev.dataTransfer.files[0]; if (f) handle(f); });
+fileInput.addEventListener('change', ev => { const f = ev.target.files[0]; if (f) handle(f); });
+
+function fail(msg){ err.textContent = msg; err.style.display = 'block'; }
+
+async function handle(file){
+  err.style.display = 'none';
+  if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name))
+    return fail('Ce fichier n’est pas un PDF. Exporte ton CV en PDF et réessaie.');
+  try {
+    const buf = await file.arrayBuffer();
+    await analyse(buf, file.name);
+  } catch (e) {
+    console.error(e);
+    fail('Impossible de lire ce PDF. S’il est protégé par mot de passe, retire la protection et réessaie.');
+  }
+}
+
+// ---------- extraction ----------
+// Regroupe les fragments de texte en lignes SUR TOUTE LA LARGEUR de la page.
+// C'est précisément ce que fait un analyseur naïf — et c'est ce qui entrelace les colonnes.
+function buildLines(items, toViewport){
+  const frags = [];
+  for (const it of items){
+    const s = it.str;
+    if (!s || !s.trim()) continue;
+    const t = it.transform;
+    const h = Math.hypot(t[1], t[3]) || it.height || 10;
+    frags.push({ str:s, x:t[4], y:t[5], w:it.width || 0, h });
+  }
+  if (!frags.length) return [];
+
+  frags.sort((a,b) => (b.y - a.y) || (a.x - b.x));   // haut -> bas, puis gauche -> droite
+  const lines = [];
+  let cur = [frags[0]];
+  for (let i = 1; i < frags.length; i++){
+    const f = frags[i], ref = cur[0];
+    // même ligne si l'écart vertical est inférieur à ~60 % de la hauteur de police
+    if (Math.abs(f.y - ref.y) <= Math.max(ref.h, f.h) * 0.6) cur.push(f);
+    else { lines.push(cur); cur = [f]; }
+  }
+  lines.push(cur);
+
+  return lines.map(fr => {
+    fr.sort((a,b) => a.x - b.x);
+    const text = fr.map(f => f.str).join(' ').replace(/\s+/g,' ').trim();
+    const x0 = Math.min(...fr.map(f => f.x));
+    const x1 = Math.max(...fr.map(f => f.x + f.w));
+    const yTop = Math.max(...fr.map(f => f.y + f.h));
+    const yBot = Math.min(...fr.map(f => f.y));
+    let box = null;
+    if (toViewport){
+      const a = toViewport(x0, yTop), b = toViewport(x1, yBot);
+      box = { left:Math.min(a[0],b[0]), top:Math.min(a[1],b[1]),
+              width:Math.abs(b[0]-a[0]), height:Math.max(4, Math.abs(b[1]-a[1])) };
+    }
+    return { text, x0, x1, yTop, yBot, box, frags:fr };
+  }).filter(l => l.text);
+}
+
+// Cherche une gouttière verticale : une bande sans texte, entourée de texte des deux côtés,
+// et suffisamment haute pour être une vraie séparation de colonnes.
+function findGutter(lines, pageW, pageH){
+  const N = 120, bins = new Array(N).fill(null).map(() => []);
+  for (const l of lines)
+    for (const f of l.frags){
+      const i0 = Math.max(0, Math.floor(f.x / pageW * N));
+      const i1 = Math.min(N-1, Math.floor((f.x + f.w) / pageW * N));
+      for (let i = i0; i <= i1; i++) bins[i].push(f.y);
+    }
+  const span = arr => arr.length ? (Math.max(...arr) - Math.min(...arr)) / pageH : 0;
+
+  let best = null, i = 0;
+  while (i < N){
+    if (bins[i].length === 0){
+      let j = i; while (j < N && bins[j].length === 0) j++;
+      const wFrac = (j - i) / N;
+      const leftBins = bins.slice(0, i).flat(), rightBins = bins.slice(j).flat();
+      // la gouttière doit être interne, assez large, et bordée de texte couvrant la page en hauteur
+      if (i > N*0.10 && j < N*0.92 && wFrac >= 0.025 &&
+          span(leftBins) > 0.35 && span(rightBins) > 0.35 &&
+          (!best || wFrac > best.wFrac))
+        best = { from:i/N, to:j/N, wFrac };
+      i = j;
+    } else i++;
+  }
+  return best;
+}
+
+const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+
+async function analyse(buf, name){
+  const doc = await pdfjsLib.getDocument({ data: buf }).promise;
+  const nPages = doc.numPages;
+
+  // --- page 1 : rendu + géométrie ---
+  const page1 = await doc.getPage(1);
+  const holderW = Math.min(900, (document.querySelector('.canvas-holder')?.clientWidth || 520) - 36);
+  const base = page1.getViewport({ scale: 1 });
+  const scale = Math.max(0.6, holderW / base.width);
+  const vp = page1.getViewport({ scale });
+  canvas.width = Math.round(vp.width); canvas.height = Math.round(vp.height);
+  await page1.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+
+  const tc1 = await page1.getTextContent();
+  lines1 = buildLines(tc1.items, (x,y) => vp.convertToViewportPoint(x,y));
+
+  // --- toutes les pages : texte + détection ---
+  let allLines = lines1.slice();
+  for (let p = 2; p <= nPages; p++){
+    const pg = await doc.getPage(p);
+    const tc = await pg.getTextContent();
+    allLines = allLines.concat(buildLines(tc.items, null));
+  }
+  fullText = allLines.map(l => l.text).join(' ');
+
+  const gut = findGutter(lines1, base.width, base.height);
+
+  // --- diagnostic ---
+  const words = fullText.split(/\s+/).filter(Boolean).length;
+  const hasText   = words >= 40;
+  const oneColumn = !gut;
+  // Les intitulés peuvent exister tout en étant illisibles : l'interlettrage typographique
+  // fait sortir « E X P É R I E N C E » du PDF, que plus aucun analyseur ne reconnaît comme un mot.
+  const heads = ['experience','formation','competences','diplome','parcours','skills','education'];
+  const plainTxt = norm(fullText);
+  const flatTxt  = plainTxt.replace(/\s+/g,'');
+  const foundPlain = heads.filter(h => plainTxt.includes(h));
+  const foundFlat  = heads.filter(h => flatTxt.includes(h));
+  const nHeads = foundFlat.length;
+  const spacedHeads = foundFlat.length > foundPlain.length;
+  const headsOk = nHeads >= 2 && !spacedHeads;
+  const shortLines = allLines.filter(l => l.text.length <= 18).length;
+  const fragmented = allLines.length > 12 && shortLines / allLines.length > 0.5;
+
+  const checks = [
+    { ok: hasText, lbl:'Le texte est extractible',
+      okTxt:`${words} mots récupérés. La machine a bien du texte à lire.`,
+      koTxt:'Presque aucun texte récupéré. Ton CV est probablement une image (scan, capture, export aplati) — un logiciel de recrutement n’en lit alors strictement rien.' },
+    { ok: oneColumn, lbl:'Une seule colonne',
+      okTxt:'Aucune séparation verticale détectée. La lecture se fait dans le bon ordre.',
+      koTxt:'Une colonne latérale a été détectée. La machine lit en travers des deux colonnes et mélange leur contenu — c’est l’erreur la plus fréquente.' },
+    { ok: headsOk, warn: spacedHeads, lbl:'Intitulés de rubriques reconnus',
+      okTxt:`${nHeads} intitulés standard trouvés (expérience, formation, compétences…).`,
+      koTxt: spacedHeads
+        ? 'Tes intitulés existent, mais ils sortent du PDF lettre par lettre — « E X P É R I E N C E » au lieu de « EXPÉRIENCE ». C’est l’espacement typographique appliqué aux titres : à l’œil c’est élégant, pour la machine ce ne sont plus des mots. Retire l’interlettrage sur les titres.'
+        : 'Aucun intitulé standard reconnu. Utilise les mots attendus — Expérience, Formation, Compétences — plutôt que des titres créatifs.' },
+    { ok: !fragmented, lbl:'Pas de texte éclaté',
+      okTxt:'Le texte forme des lignes continues.',
+      koTxt:'Le texte est découpé en très nombreux fragments courts, signe de zones de texte ou de tableaux. Le sens des phrases se perd à l’extraction.' },
+  ];
+
+  verdictEl.innerHTML = checks.map(c => `
+    <div class="chk ${c.ok ? 'pass' : c.warn ? 'warn' : 'fail'}">
+      <div class="mark">${c.ok ? '✓' : c.warn ? '!' : '✕'}</div>
+      <div><div class="lbl">${c.lbl}</div><div class="exp">${c.ok ? c.okTxt : c.koTxt}</div></div>
+    </div>`).join('');
+
+  const nOk = checks.filter(c => c.ok).length;
+  const cls = nOk === 4 ? 'good' : nOk >= 2 ? 'mid' : 'bad';
+  const verdicts = {
+    good:'<b>Ton CV passe.</b> La machine en extrait un texte propre et dans le bon ordre. C’est un vrai recruteur qui décidera de la suite — ce qui est exactement le but.',
+    mid:'<b>Ton CV passe en partie.</b> Une partie de son contenu arrive déformée au recruteur. Les points en rouge ci-dessus se corrigent en quelques minutes.',
+    bad:'<b>Ton CV est difficilement lisible par une machine.</b> Il y a de fortes chances qu’il ne soit jamais parvenu intact à un recruteur.'
+  };
+  scoreEl.className = 'score ' + cls;
+  scoreEl.innerHTML = `<div class="big">${nOk}/4</div><div class="txt">${verdicts[cls]}</div>`;
+
+  // --- gouttière visualisée sur la page ---
+  if (gut){
+    gutterEl.style.display = 'block';
+    gutterEl.style.left  = (gut.from * canvas.width) + 'px';
+    gutterEl.style.width = ((gut.to - gut.from) * canvas.width) + 'px';
+  } else gutterEl.style.display = 'none';
+
+  // --- calques de lignes ---
+  lineLayer.innerHTML = '';
+  lines1.forEach(l => {
+    const d = document.createElement('div');
+    d.className = 'ln';
+    d.style.cssText = `left:${l.box.left}px;top:${l.box.top}px;width:${l.box.width}px;height:${l.box.height}px`;
+    lineLayer.appendChild(d);
+  });
+
+  metaEl.textContent = `${nPages} page${nPages>1?'s':''} · ${words} mots · ${lines1.length} lignes en page 1`;
+  streamEl.textContent = '';
+  results.style.display = 'block';
+  results.scrollIntoView({ behavior:'smooth', block:'start' });
+  setTimeout(playRead, 650);
+}
+
+// ---------- animation de lecture ----------
+function stopAnim(){ if (anim){ clearTimeout(anim); anim = null; } }
+
+function playRead(){
+  stopAnim();
+  streamEl.textContent = '';
+  [...lineLayer.children].forEach(e => e.classList.remove('on'));
+  let i = 0;
+  const step = () => {
+    if (i > 0) lineLayer.children[i-1]?.classList.remove('on');
+    if (i >= lines1.length){
+      streamEl.textContent = fullText;
+      streamEl.scrollTop = streamEl.scrollHeight;
+      return;
+    }
+    lineLayer.children[i]?.classList.add('on');
+    streamEl.innerHTML = escapeHtml(lines1.slice(0, i+1).map(l => l.text).join(' '))
+                       + '<span class="cursor"></span>';
+    streamEl.scrollTop = streamEl.scrollHeight;
+    i++;
+    anim = setTimeout(step, 105);
+  };
+  step();
+}
+const escapeHtml = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+// Pilotage image par image, utilisé pour filmer l'outil de façon déterministe.
+window.__ccCapture = {
+  count: () => lines1.length,
+  full:  () => fullText,
+  setRead(i){
+    stopAnim();
+    [...lineLayer.children].forEach((e, j) => e.classList.toggle('on', j === i));
+    streamEl.textContent = lines1.slice(0, i + 1).map(l => l.text).join(' ');
+    streamEl.scrollTop = streamEl.scrollHeight;
+  },
+};
+
+$('play').addEventListener('click', playRead);
+$('all').addEventListener('click', () => {
+  stopAnim();
+  [...lineLayer.children].forEach(e => e.classList.remove('on'));
+  streamEl.textContent = fullText;
+});
+$('reset').addEventListener('click', () => {
+  stopAnim();
+  results.style.display = 'none';
+  fileInput.value = '';
+  window.scrollTo({ top:0, behavior:'smooth' });
+});
+</script>
+</body>
+</html>
