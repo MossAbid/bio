@@ -43,6 +43,7 @@ h1 em{font-style:italic;color:var(--or-clair)}
 
 /* ---------- zone de dépôt ---------- */
 .drop{
+  display:block;
   margin:8px 0 56px; border:1.5px dashed rgba(201,163,90,.4); border-radius:6px;
   background:rgba(201,163,90,.035); padding:54px 28px; text-align:center;
   cursor:pointer; transition:border-color .18s, background .18s, transform .18s;
@@ -149,7 +150,7 @@ footer a{color:var(--creme-dim)}
     <input type="file" id="file" accept="application/pdf">
     <div class="err" id="err"></div>
   </label>
-  <p style="margin:-38px 0 56px;text-align:center;font-size:14px;color:var(--creme-faint)">
+  <p style="margin:16px 0 56px;text-align:center;font-size:14px;color:var(--creme-faint)">
     Pas de CV sous la main ? Essaie avec
     <a href="exemples/CV-deux-colonnes.pdf" download style="color:var(--or)">un CV en deux colonnes</a> ou
     <a href="exemples/CV-une-colonne.pdf" download style="color:var(--or)">un CV en une colonne</a>.
