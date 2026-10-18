@@ -62,7 +62,7 @@
   <p class="lede">Deux façons d'utiliser l'œil d'un recruteur en activité pour ta propre candidature.</p>
 
   <!-- GUIDE -->
-  <section class="offer">
+  <section class="offer" id="guide">
     <span class="pill">PDF · Accès immédiat</span>
     <h2>Le CV qui passe — ATS &amp; recruteurs</h2>
     <p class="price">19 € <small>TTC — TVA non applicable, art. 293 B du CGI</small></p>
@@ -74,11 +74,11 @@
       <li>La méthode mots-clés pour matcher une offre sans bourrage.</li>
     </ul>
     <a class="buy" id="buyGuide" href="#">Recevoir le guide — 19 €</a>
-    <p class="cap">Paiement sécurisé Stripe · livré par email en 2 minutes.</p>
+    <p class="cap">Paiement sécurisé · PDF envoyé par email immédiatement.</p>
   </section>
 
   <!-- AUDIT -->
-  <section class="offer">
+  <section class="offer" id="audit">
     <span class="pill">Personnalisé · 5 places / semaine</span>
     <h2>Audit CV &amp; LinkedIn</h2>
     <p class="price">99 € <small>TTC — TVA non applicable, art. 293 B du CGI</small></p>
@@ -90,7 +90,7 @@
       <li>Plan d'action concret, applicable le jour même.</li>
     </ul>
     <a class="buy ghost" id="buyAudit" href="#">Réserver mon audit — 99 €</a>
-    <p class="cap">Après paiement, tu déposes ton CV et ton contexte en 2 minutes.</p>
+    <p class="cap" id="capAudit">Au paiement, tu indiques ton LinkedIn et le poste visé ; tu m'envoies ton CV en réponse à l'email de confirmation.</p>
   </section>
 
   <!-- FAQ -->
@@ -111,12 +111,18 @@
   <footer><a href="/cgv.html">CGV</a> · <a href="/#privacy">Confidentialité</a> · © <span id="yr"></span> Consultant Chronicles</footer>
 </main>
 <script>
-  // URLs des Stripe Payment Links — coller ici celles notées dans docs/superpowers/plans/stripe-links.md
-  // URLs des Stripe Payment Links (mode test — cf. docs/superpowers/plans/stripe-links.md)
-  const STRIPE_LINK_GUIDE = 'https://buy.stripe.com/test_14A28reDT2GL9EMbzFgA800';
-  const STRIPE_LINK_AUDIT = 'https://buy.stripe.com/test_eVq7sLdzP5SXcQY1Z5gA801';
-  document.getElementById('buyGuide').href = STRIPE_LINK_GUIDE;
-  document.getElementById('buyAudit').href = STRIPE_LINK_AUDIT;
+  // Liens produits Gumroad. Un lien vide = bouton « Bientôt disponible », non cliquable.
+  // (Ancien circuit Stripe, en mode test : docs/superpowers/plans/stripe-links.md)
+  const LINK_GUIDE = '';
+  const LINK_AUDIT = '';
+  for (const [id, url] of [['buyGuide', LINK_GUIDE], ['buyAudit', LINK_AUDIT]]) {
+    const a = document.getElementById(id);
+    if (url) { a.href = url; continue; }
+    a.removeAttribute('href');
+    a.textContent = 'Bientôt disponible';
+    a.style.cssText = 'opacity:.45;cursor:default;transform:none';
+  }
+  if (!LINK_AUDIT) document.getElementById('capAudit').textContent = 'Les réservations ouvrent très bientôt.';
   document.getElementById('yr').textContent = new Date().getFullYear();
 </script>
 </body></html>
