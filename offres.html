@@ -114,7 +114,7 @@
   // Liens produits Gumroad. Un lien vide = bouton « Bientôt disponible », non cliquable.
   // (Ancien circuit Stripe, en mode test : docs/superpowers/plans/stripe-links.md)
   const LINK_GUIDE = 'https://consultantchronicles.gumroad.com/l/guide-cv-ats';
-  const LINK_AUDIT = '';
+  const LINK_AUDIT = 'https://consultantchronicles.gumroad.com/l/audit-cv-linkedin';
   for (const [id, url] of [['buyGuide', LINK_GUIDE], ['buyAudit', LINK_AUDIT]]) {
     const a = document.getElementById(id);
     if (url) { a.href = url; continue; }
