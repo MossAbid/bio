@@ -4,9 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Checklist du Recruteur</title>
-<meta http-equiv="refresh" content="0; url=/Checklist-du-Recruteur.pdf">
+<meta http-equiv="refresh" content="2; url=/Checklist-du-Recruteur.pdf">
 <link rel="canonical" href="https://consultantchronicles.fr/Checklist-du-Recruteur.pdf">
-<script>location.replace('/Checklist-du-Recruteur.pdf');</script>
+<script>
+  // Compte le téléchargement dans GoatCounter, puis ouvre le PDF (au plus tard après 800 ms).
+  (function () {
+    var go = function () { location.replace('/Checklist-du-Recruteur.pdf'); };
+    var img = new Image();
+    img.onload = img.onerror = go;
+    img.src = 'https://consultantchronicles.goatcounter.com/count?p=' + encodeURIComponent('/checklist')
+      + '&t=' + encodeURIComponent('Checklist (téléchargement direct)')
+      + '&r=' + encodeURIComponent(document.referrer) + '&rnd=' + Math.random().toString(36).slice(2);
+    setTimeout(go, 800);
+  })();
+</script>
 <style>body{background:#0D0D0F;color:#ECEBE3;font-family:Archivo,system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0}a{color:#C9A35A}</style>
 </head>
 <body>
