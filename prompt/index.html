@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Le prompt qu'un recruteur utiliserait pour adapter ton CV à une offre avec ChatGPT ou Claude. Gratuit.">
+<title>Le prompt du recruteur — Consultant Chronicles</title>
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d0d0f; --ink-2:#151517; --panel:#1b1b1e;
+    --line:rgba(201,163,90,.22); --line-soft:rgba(236,234,227,.08);
+    --gold:#c9a35a; --gold-bright:#e6cd8b; --cream:#ecebe3;
+    --muted:#9c988c; --muted-2:#726f68; --ok:#7bbf8e; --err:#e0857a;
+    --radius:16px; --maxw:560px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--ink);color:var(--cream);font-family:"Archivo",-apple-system,BlinkMacSystemFont,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .bg{position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(900px 520px at 50% -8%, rgba(201,163,90,.16), transparent 60%),linear-gradient(180deg,#0d0d0f,#0b0b0d 55%,#0d0d0f)}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:40px 16px 56px}
+  .brand{display:flex;align-items:center;gap:12px;justify-content:center;text-decoration:none;color:var(--cream)}
+  .brand img{width:40px;height:40px}
+  .brand span{font-family:"Fraunces";font-weight:600;font-size:18px}
+  .brand b{color:var(--gold);font-weight:600}
+  .kicker{font-size:11px;letter-spacing:3.6px;text-transform:uppercase;color:var(--gold);font-weight:600}
+  .hero{margin:34px 0 0;text-align:center}
+  h1{font-family:"Fraunces";font-weight:500;font-size:clamp(30px,8.4vw,42px);line-height:1.08;margin:12px 0 16px;letter-spacing:-.4px}
+  h1 em{font-style:italic;color:var(--gold-bright)}
+  .lede{color:var(--muted);font-size:16px;max-width:440px;margin:0 auto}
+  .card{margin:30px 0 0;background:linear-gradient(180deg,var(--panel),var(--ink-2));border:1px solid var(--line);
+    border-radius:var(--radius);padding:24px 20px 22px;box-shadow:0 24px 60px -28px rgba(0,0,0,.9)}
+  .bullets{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:9px}
+  .bullets li{display:flex;gap:11px;align-items:flex-start;font-size:14px;color:#d6d4cb}
+  .bullets li::before{content:"";flex:0 0 auto;width:7px;height:7px;margin-top:8px;border-radius:50%;background:var(--gold)}
+  form{display:grid;gap:11px}
+  label.lab{display:block;font-size:12px;color:var(--muted);margin:0 0 5px}
+  input[type=text],input[type=email]{width:100%;background:var(--ink);color:var(--cream);border:1px solid var(--line-soft);
+    border-radius:11px;padding:13px 14px;font:inherit;font-size:15px;outline:none}
+  input::placeholder{color:var(--muted-2)}
+  input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,163,90,.16)}
+  .consent{display:flex;gap:10px;align-items:flex-start;margin:3px 0 2px}
+  .consent input{flex:0 0 auto;width:18px;height:18px;margin-top:2px;accent-color:var(--gold)}
+  .consent label{font-size:12px;color:var(--muted);line-height:1.45}
+  .consent a{color:var(--gold)}
+  button.cta{margin-top:6px;border:0;cursor:pointer;width:100%;background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+    color:#1a1408;font-family:"Archivo";font-weight:700;font-size:15.5px;padding:15px 18px;border-radius:12px}
+  button.cta:disabled{opacity:.6;cursor:default}
+  .msg{font-size:13px;margin:4px 0 0;text-align:center}
+  .msg.err{color:var(--err)}
+  .reassure{text-align:center;font-size:11.5px;color:var(--muted-2);margin:12px 0 0}
+
+  /* prompt dévoilé */
+  #reveal{display:none}
+  #reveal.on{display:block}
+  .steps{margin:0 0 18px;padding:0 0 0 20px;color:#d6d4cb;font-size:14px}
+  .steps li{margin:0 0 6px}
+  .promptbox{position:relative;background:var(--ink);border:1px solid var(--line-soft);border-radius:12px;
+    max-height:420px;overflow:auto}
+  .promptbox pre{margin:0;padding:16px 14px;white-space:pre-wrap;word-break:break-word;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:#d6d4cb}
+  .copy{position:sticky;top:8px;float:right;margin:8px 8px 0 0;border:1px solid var(--line);background:var(--panel);color:var(--gold);
+    font:600 12.5px "Archivo";padding:7px 12px;border-radius:999px;cursor:pointer}
+  .tip{margin:18px 0 0;padding:14px 16px;border-left:2px solid var(--gold);background:rgba(201,163,90,.06);font-size:14px;color:#d6d4cb;border-radius:0 10px 10px 0}
+  .tip b{color:var(--gold-bright)}
+  h2{font-family:"Fraunces";font-weight:500;font-size:22px;margin:0 0 12px}
+  .next{margin:30px 0 0;text-align:center;color:var(--muted);font-size:14px}
+  .next a{color:var(--gold)}
+  footer{margin:40px 0 0;text-align:center;font-size:11px;color:var(--muted-2)}
+  footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<main class="wrap">
+  <a class="brand" href="/"><img src="/logo-mark.png" alt="" width="40" height="40"><span>Consultant <b>Chronicles</b></span></a>
+
+  <section class="hero">
+    <div class="kicker">Gratuit · ChatGPT ou Claude</div>
+    <h1>Le prompt <em>du recruteur</em></h1>
+    <p class="lede">Colle une offre et ton CV : l'IA lit l'offre comme un recruteur, puis réécrit ton CV pour ce poste. Sans rien inventer.</p>
+  </section>
+
+  <section class="card" id="gate">
+    <ul class="bullets">
+      <li>Les 3 critères éliminatoires de l'offre, et l'enjeu réel du poste.</li>
+      <li>Les mots-clés que le recruteur et le logiciel de tri vont chercher.</li>
+      <li>Ton CV réécrit pour cette offre, lisible par les logiciels de tri.</li>
+      <li>Des garde-fous de recruteur : aucun chiffre ni compétence inventés.</li>
+    </ul>
+    <form id="signup" novalidate>
+      <div>
+        <label class="lab" for="prenom">Prénom <span style="color:var(--muted-2)">(facultatif)</span></label>
+        <input type="text" id="prenom" placeholder="Camille" autocomplete="given-name">
+      </div>
+      <div>
+        <label class="lab" for="email">Email</label>
+        <input type="email" id="email" placeholder="toi@email.com" autocomplete="email" required>
+      </div>
+      <div class="consent">
+        <input type="checkbox" id="consent" required>
+        <label for="consent">J'accepte de recevoir les conseils carrière de Consultant Chronicles par email. Je peux me désinscrire à tout moment. <a href="/cgv.html">Politique de confidentialité</a>.</label>
+      </div>
+      <button type="submit" class="cta" id="submitBtn">Afficher le prompt</button>
+      <p class="msg" id="msg" aria-live="polite"></p>
+    </form>
+    <p class="reassure">Le prompt s'affiche tout de suite sur cette page. Pas de spam.</p>
+  </section>
+
+  <section class="card" id="reveal" aria-live="polite">
+    <h2 id="hello">Le voici.</h2>
+    <ol class="steps">
+      <li>Retire ton adresse, ton téléphone et ton email de ton CV.</li>
+      <li>Copie le prompt, colle-le dans ChatGPT ou Claude.</li>
+      <li>Remplace les deux crochets par l'offre et par ton CV, puis envoie.</li>
+    </ol>
+    <div class="promptbox">
+      <button class="copy" id="copyBtn" type="button">Copier</button>
+<pre id="prompt">Tu es un recruteur expérimenté, spécialiste du secteur de l'offre ci-dessous. Tu sais comment les logiciels de tri (ATS) lisent un CV, et ce qu'un recruteur regarde en 6 secondes.
+
+Ta mission : adapter mon CV à cette offre, sans jamais rien inventer.
+
+RÈGLES ABSOLUES
+1. Tu n'ajoutes aucune compétence, aucun outil, aucun chiffre ni aucune expérience qui ne figure pas dans mon CV. Tu peux reformuler, réordonner, mettre en avant, raccourcir ou supprimer.
+2. Quand l'offre utilise un terme différent pour une chose que j'ai réellement faite, reprends le terme de l'offre.
+3. Un chiffre estimé (« environ », « plus de ») reste estimé partout, même dans l'accroche.
+4. Tu ne modifies pas l'intitulé officiel de mes postes passés. Seul le titre sous mon nom s'adapte à l'offre.
+
+ÉTAPE 0 — Si mes expériences sont surtout des listes de missions sans résultat ni chiffre, ne réécris pas encore : pose-moi d'abord 5 questions maximum, ciblées sur les critères de l'offre, et attends mes réponses.
+
+ÉTAPE 1 — LIS L'OFFRE COMME UN RECRUTEUR
+- les 3 critères éliminatoires ;
+- l'enjeu réel du poste, en une phrase ;
+- les 10 mots-clés que le recruteur et l'ATS vont chercher ;
+- les critères importants qui me manquent (sans les masquer).
+
+ÉTAPE 2 — RÉÉCRIS MON CV POUR CETTE OFFRE
+Forme : une seule colonne, titres classiques (Expérience professionnelle, Formation, Compétences, Langues), pas de tableau ni d'icônes, 1 page si moins de 10 ans d'expérience.
+- Titre sous mon nom : le poste visé, ou le plus proche que mon parcours justifie, plus 2 ou 3 mots-clés de l'offre.
+- Accroche de 3 lignes : ce que je fais, pour qui, avec quel résultat. Ni « passionné », ni « dynamique », ni « nouvelles opportunités ».
+- Expériences : les réalisations qui répondent à l'offre en premier, avec leurs chiffres. Chaque puce commence par un verbe d'action.
+- Compétences : celles de l'offre en premier. Supprime les qualités génériques et les outils sans rapport.
+Le CV ne contient aucun commentaire sur lui-même : tes remarques viennent après.
+
+L'offre :
+[COLLE L'OFFRE ICI]
+
+Mon CV :
+[COLLE TON CV ICI]</pre>
+    </div>
+    <p class="tip"><b>Le conseil du recruteur :</b> ce prompt ne fait pas de miracle avec une liste de missions. Plus tu lui donnes de chiffres (budgets, volumes, résultats), plus ton CV sera fort. S'il te pose des questions, réponds comme si tu racontais ton poste à un ami.</p>
+  </section>
+
+  <p class="next">Et pour vérifier ton CV ligne par ligne : <a href="/checklist">la Checklist du Recruteur</a>.</p>
+
+  <footer>@ConsultantChronicles · <a href="/">consultantchronicles.fr</a> · <a href="/cgv.html">Mentions et CGV</a></footer>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const setMsg = (t, cls) => { $('msg').textContent = t; $('msg').className = 'msg ' + (cls || ''); };
+  const UNLOCK = 'cc-prompt-unlocked';
+
+  function reveal(prenom) {
+    $('gate').style.display = 'none';
+    $('hello').textContent = prenom ? `Le voici, ${prenom}.` : 'Le voici.';
+    $('reveal').classList.add('on');
+    try { localStorage.setItem(UNLOCK, '1'); } catch (e) {}
+  }
+  // une personne déjà inscrite n'a pas à repasser par le formulaire
+  try { if (localStorage.getItem(UNLOCK)) reveal(''); } catch (e) {}
+
+  $('signup').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const prenom = $('prenom').value.trim();
+    const email = $('email').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setMsg('Entre une adresse email valide.', 'err');
+    if (!$('consent').checked) return setMsg('Coche la case pour afficher le prompt.', 'err');
+    $('submitBtn').disabled = true; setMsg('Envoi…');
+    try {
+      const res = await fetch('https://brevo-subscribe.mmossly.workers.dev', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, prenom }),
+      });
+      if (!res.ok) throw new Error(res.status);
+      if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: '/prompt-inscription', title: 'Inscription prompt', event: true });
+      reveal(prenom);
+    } catch (err) {
+      $('submitBtn').disabled = false;
+      setMsg('Oups, réessaie dans un instant.', 'err');
+    }
+  });
+
+  $('copyBtn').addEventListener('click', async () => {
+    const text = $('prompt').textContent;
+    try { await navigator.clipboard.writeText(text); }
+    catch (e) {
+      const r = document.createRange(); r.selectNodeContents($('prompt'));
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges();
+    }
+    $('copyBtn').textContent = 'Copié ✓';
+    setTimeout(() => { $('copyBtn').textContent = 'Copier'; }, 1800);
+  });
+</script>
+<script data-goatcounter="https://consultantchronicles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
